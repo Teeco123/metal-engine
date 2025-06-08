@@ -4,10 +4,10 @@
 import PackageDescription
 
 let package = Package(
-  name: "MetalApp",
+  name: "metal-triangle",
   targets: [
     .executableTarget(
-      name: "MetalApp",
+      name: "metal-triangle",
       linkerSettings: [
         .linkedFramework("Metal"),
         .linkedFramework("Foundation"),
