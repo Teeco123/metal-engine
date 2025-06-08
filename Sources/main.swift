@@ -3,7 +3,7 @@ import Logger
 import Metal
 
 guard let device = MTLCreateSystemDefaultDevice() else {
-    print("Failed to get the system's default Metal device.")
+    Logger.error("Failed to get the system's default Metal device.")
     exit(1)
 }
 

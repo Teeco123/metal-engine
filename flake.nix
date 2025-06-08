@@ -28,6 +28,7 @@
             nil
             apple-sdk_15
             darwin.xcode_16_2
+            swiftlint
           ];
 
           shellHook = ''
