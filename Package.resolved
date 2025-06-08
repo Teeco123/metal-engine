@@ -1,0 +1,15 @@
+{
+  "originHash" : "b135bd8c84a35cd81d7f0c6c245307ed608d11c4a745ea35a0e2df9522e8ea12",
+  "pins" : [
+    {
+      "identity" : "swift-log",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Teeco123/swift-log",
+      "state" : {
+        "revision" : "2ce47aea896e521c7a0d0579c1c3acd4d4ef1ff7",
+        "version" : "0.0.3"
+      }
+    }
+  ],
+  "version" : 3
+}
