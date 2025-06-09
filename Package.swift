@@ -4,16 +4,12 @@
 import PackageDescription
 
 let package = Package(
-    name: "metal-triangle",
-    dependencies: [
-        .package(url: "https://github.com/Teeco123/swift-log", from: "0.0.3")
-    ],
+    name: "metal-engine",
+    dependencies: [],
     targets: [
         .executableTarget(
-            name: "metal-triangle",
-            dependencies: [
-                .product(name: "Logger", package: "swift-log")
-            ],
+            name: "metal-engine",
+            dependencies: [],
             linkerSettings: [
                 .linkedFramework("Metal"),
                 .linkedFramework("Foundation")
