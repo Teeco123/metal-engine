@@ -5,5 +5,6 @@ public class MetalEngine {
     public static func initialize() {
         Logger.info("MetalEngine starting up...")
         let device = Device.commandQueue.device
+        let layer = MetalLayer.layer
     }
 }

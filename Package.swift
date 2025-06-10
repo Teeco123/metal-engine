@@ -21,6 +21,9 @@ let package = Package(
         ),
         .target(
             name: "Renderer",
+            dependencies: [
+                "Utils"
+            ],
             path: "Sources/Renderer"
         ),
         .target(
