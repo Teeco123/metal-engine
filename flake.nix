@@ -26,14 +26,12 @@
             zsh
             nixfmt-rfc-style
             nil
-            apple-sdk_15
-            darwin.xcode_16_2
             swiftlint
           ];
 
           shellHook = ''
             # Your Xcode.app path - update this to match your actual path
-            XCODE_PATH="/nix/store/i7m8av0nxj79z857bnjwcp0cvfry4bp5-Xcode.app"
+            XCODE_PATH="/nix/store/bx40ydx302z1gnw4ihixanmaylz4czsa-Xcode.app"
 
             # Set up environment
             export DEVELOPER_DIR="$XCODE_PATH/Contents/Developer"
