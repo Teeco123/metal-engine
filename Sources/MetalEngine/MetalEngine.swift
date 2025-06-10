@@ -4,6 +4,7 @@ import QuartzCore
 import Renderer
 import Utils
 
+@MainActor
 public class MetalEngine {
     var renderTimer: Timer?
     var device: MTLDevice
@@ -21,7 +22,11 @@ public class MetalEngine {
         renderTimer = Timer.scheduledTimer(
             withTimeInterval: 1.0 / 60.0, repeats: true
         ) { [weak self] _ in
-            self?.draw()
+            guard let self = self else { return }
+
+            Task { @MainActor in
+                self.draw()
+            }
         }
     }
 
@@ -36,7 +41,7 @@ public class MetalEngine {
         let passDescriptor = MTLRenderPassDescriptor()
         passDescriptor.colorAttachments[0].texture = drawable.texture
         passDescriptor.colorAttachments[0].loadAction = .clear
-        passDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(0.1, 0.2, 0.3, 1.0)
+        passDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(1.0, 0.75, 0.8, 1.0)
         passDescriptor.colorAttachments[0].storeAction = .store
 
         guard let commandBuffer = self.commandQueue.makeCommandBuffer(),
