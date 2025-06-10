@@ -15,9 +15,13 @@ let package = Package(
         .target(
             name: "MetalEngine",
             dependencies: [
-                "Utils"
+                "Renderer", "Utils"
             ],
             path: "Sources/MetalEngine"
+        ),
+        .target(
+            name: "Renderer",
+            path: "Sources/Renderer"
         ),
         .target(
             name: "Utils",
