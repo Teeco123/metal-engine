@@ -46,6 +46,5 @@ public class MetalEngine {
         renderEncoder.endEncoding()
         commandBuffer.present(drawable)
         commandBuffer.commit()
-        Logger.info("dupa")
     }
 }
