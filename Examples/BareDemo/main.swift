@@ -1,6 +1,5 @@
 import Foundation
 import MetalEngine
-import Utils
 
 @main
 struct BareDemo {

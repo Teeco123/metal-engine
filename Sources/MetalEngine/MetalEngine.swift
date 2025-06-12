@@ -1,8 +1,6 @@
 import Foundation
 import Metal
 import QuartzCore
-@_exported import Renderer
-@_exported import Utils
 
 @MainActor
 public class MetalEngine {
@@ -12,8 +10,6 @@ public class MetalEngine {
         Logger.info("MetalEngine starting up...")
 
         Window.shared.initialize()
-
-        _ = Device.shared
     }
 
     public func startRenderingLoop() {
@@ -40,7 +36,7 @@ public class MetalEngine {
         passDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(1.0, 0.75, 0.8, 1.0)
         passDescriptor.colorAttachments[0].storeAction = .store
 
-        guard let commandBuffer = Device.commandQueue.makeCommandBuffer() else { return }
+        guard let commandBuffer = Device.shared.commandQueue.makeCommandBuffer() else { return }
         guard let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: passDescriptor)
         else { return }
 

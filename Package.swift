@@ -17,21 +17,7 @@ let package = Package(
     targets: [
         .target(
             name: "MetalEngine",
-            dependencies: [
-                "Renderer", "Utils"
-            ],
             path: "Sources/MetalEngine"
-        ),
-        .target(
-            name: "Renderer",
-            dependencies: [
-                "Utils"
-            ],
-            path: "Sources/Renderer"
-        ),
-        .target(
-            name: "Utils",
-            path: "Sources/Utils"
         ),
         .executableTarget(
             name: "BareDemo",
