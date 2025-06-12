@@ -7,16 +7,13 @@ import Utils
 @MainActor
 public class MetalEngine {
     var renderTimer: Timer?
-    var device: MTLDevice
-    var commandQueue: MTLCommandQueue
-    var layer: CAMetalLayer
 
     public init() {
         Logger.info("MetalEngine starting up...")
-        device = Device.device
-        commandQueue = Device.commandQueue
-        MetalLayer.size = Size(1000, 1000)
-        layer = MetalLayer.layer
+        Window.size = Size(1000, 1000)
+
+        _ = Device.shared
+        _ = Window.shared
     }
 
     public func startRenderingLoop() {
@@ -37,20 +34,18 @@ public class MetalEngine {
     }
 
     func draw() {
-        let drawable = MetalLayer.drawable
-
         let passDescriptor = MTLRenderPassDescriptor()
-        passDescriptor.colorAttachments[0].texture = drawable.texture
+        passDescriptor.colorAttachments[0].texture = Window.drawable.texture
         passDescriptor.colorAttachments[0].loadAction = .clear
         passDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(1.0, 0.75, 0.8, 1.0)
         passDescriptor.colorAttachments[0].storeAction = .store
 
-        guard let commandBuffer = self.commandQueue.makeCommandBuffer(),
-              let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: passDescriptor)
+        guard let commandBuffer = Device.commandQueue.makeCommandBuffer() else { return }
+        guard let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: passDescriptor)
         else { return }
 
         renderEncoder.endEncoding()
-        commandBuffer.present(drawable)
+        commandBuffer.present(Window.drawable)
         commandBuffer.commit()
     }
 }

@@ -3,7 +3,7 @@ import Metal
 import Utils
 
 public final class Device: @unchecked Sendable {
-    static let shared = Device()
+    public static let shared = Device()
     var SDevice: MTLDevice
     var SCommandQueue: MTLCommandQueue
 

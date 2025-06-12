@@ -19,8 +19,8 @@ public struct Size {
 }
 
 @MainActor
-public final class MetalLayer: @unchecked Sendable {
-    static let shared = MetalLayer()
+public final class Window: @unchecked Sendable {
+    public static let shared = Window()
     public static var size = Size()
     var SLayer: CAMetalLayer
     var SWindow: NSWindow?
