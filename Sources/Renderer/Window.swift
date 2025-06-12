@@ -21,7 +21,7 @@ public struct Size {
 @MainActor
 public final class Window: @unchecked Sendable {
     public static let shared = Window()
-    public var size = Size()
+    public var size: Size = Size()
     public var layer: CAMetalLayer = CAMetalLayer()
     public var window: NSWindow = NSWindow()
 
