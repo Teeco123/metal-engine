@@ -15,6 +15,7 @@ public class MetalEngine {
         Logger.info("MetalEngine starting up...")
         device = Device.device
         commandQueue = Device.commandQueue
+        MetalLayer.size = Size(1000, 1000)
         layer = MetalLayer.layer
     }
 

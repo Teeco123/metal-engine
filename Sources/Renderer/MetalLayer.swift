@@ -4,8 +4,24 @@ import Metal
 import QuartzCore
 import Utils
 
+public struct Size {
+    public var width: CGFloat?
+    public var height: CGFloat?
+
+    public init(_ width: CGFloat, _ height: CGFloat) {
+        self.width = width
+        self.height = height
+    }
+    public init() {
+        self.width = nil
+        self.height = nil
+    }
+}
+
+@MainActor
 public final class MetalLayer: @unchecked Sendable {
     static let shared = MetalLayer()
+    public static var size = Size()
     var SLayer: CAMetalLayer
     var SWindow: NSWindow?
 
@@ -17,19 +33,25 @@ public final class MetalLayer: @unchecked Sendable {
         return drawable
     }
     private init() {
+        guard let width = Self.size.width, let height = Self.size.height else {
+            Logger.error("Window width and height must be set")
+            exit(1)
+        }
+        Logger.info("Window width: \(width) height: \(height)")
+
         let layer = CAMetalLayer()
         layer.device = Device.device
         layer.pixelFormat = .bgra8Unorm
         layer.framebufferOnly = true
         layer.contentsScale = 2.0
-        layer.drawableSize = CGSize(width: 100, height: 100)
-        layer.frame = CGRect(x: 0, y: 0, width: 100, height: 100)
+        layer.drawableSize = CGSize(width: width, height: height)
+        layer.frame = CGRect(x: 0, y: 0, width: width, height: height)
         SLayer = layer
         Logger.success("Created metal layer")
 
         DispatchQueue.main.async {
             let window = NSWindow(
-                contentRect: NSRect(x: 0, y: 0, width: 100, height: 100),
+                contentRect: NSRect(x: 0, y: 0, width: width, height: height),
                 styleMask: [.titled, .closable],
                 backing: .buffered,
                 defer: false,
