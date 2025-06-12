@@ -1,8 +1,8 @@
 import Foundation
 import Metal
 import QuartzCore
-import Renderer
-import Utils
+@_exported import Renderer
+@_exported import Utils
 
 @MainActor
 public class MetalEngine {
@@ -10,10 +10,10 @@ public class MetalEngine {
 
     public init() {
         Logger.info("MetalEngine starting up...")
-        Window.size = Size(1000, 1000)
+
+        Window.shared.initialize()
 
         _ = Device.shared
-        _ = Window.shared
     }
 
     public func startRenderingLoop() {
@@ -35,7 +35,7 @@ public class MetalEngine {
 
     func draw() {
         let passDescriptor = MTLRenderPassDescriptor()
-        passDescriptor.colorAttachments[0].texture = Window.drawable.texture
+        passDescriptor.colorAttachments[0].texture = Window.shared.drawable.texture
         passDescriptor.colorAttachments[0].loadAction = .clear
         passDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(1.0, 0.75, 0.8, 1.0)
         passDescriptor.colorAttachments[0].storeAction = .store
@@ -45,7 +45,7 @@ public class MetalEngine {
         else { return }
 
         renderEncoder.endEncoding()
-        commandBuffer.present(Window.drawable)
+        commandBuffer.present(Window.shared.drawable)
         commandBuffer.commit()
     }
 }

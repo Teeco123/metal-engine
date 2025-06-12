@@ -21,36 +21,35 @@ public struct Size {
 @MainActor
 public final class Window: @unchecked Sendable {
     public static let shared = Window()
-    public static var size = Size()
-    var SLayer: CAMetalLayer
-    var SWindow: NSWindow?
+    public var size = Size()
+    public var layer: CAMetalLayer = CAMetalLayer()
+    public var window: NSWindow = NSWindow()
 
-    var SDrawable: CAMetalDrawable {
-        guard let drawable = SLayer.nextDrawable() else {
+    public var drawable: CAMetalDrawable {
+        guard let drawable = layer.nextDrawable() else {
             Logger.error("Failed to create drawable for metal layer")
             exit(1)
         }
         return drawable
     }
-    private init() {
-        guard let width = Self.size.width, let height = Self.size.height else {
+
+    public func initialize() {
+        guard let width = size.width, let height = size.height else {
             Logger.error("Window width and height must be set")
             exit(1)
         }
         Logger.info("Window width: \(width) height: \(height)")
 
-        let layer = CAMetalLayer()
         layer.device = Device.device
         layer.pixelFormat = .bgra8Unorm
         layer.framebufferOnly = true
         layer.contentsScale = 2.0
         layer.drawableSize = CGSize(width: width, height: height)
         layer.frame = CGRect(x: 0, y: 0, width: width, height: height)
-        SLayer = layer
         Logger.success("Created metal layer")
 
-        DispatchQueue.main.async {
-            let window = NSWindow(
+        Task { @MainActor in
+            window = NSWindow(
                 contentRect: NSRect(x: 0, y: 0, width: width, height: height),
                 styleMask: [.titled, .closable],
                 backing: .buffered,
@@ -59,12 +58,8 @@ public final class Window: @unchecked Sendable {
             window.makeKeyAndOrderFront(nil)
             window.contentView?.wantsLayer = true
             window.contentView?.layer?.addSublayer(layer)
-            self.SWindow = window
             Logger.success("Created NSWindow")
         }
     }
-
-    public static var layer: CAMetalLayer { shared.SLayer }
-    public static var drawable: CAMetalDrawable { shared.SDrawable }
-    public static var window: NSWindow? { shared.SWindow }
+    private init() {}
 }
