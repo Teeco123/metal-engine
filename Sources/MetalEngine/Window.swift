@@ -3,31 +3,6 @@ import Foundation
 import Metal
 import QuartzCore
 
-/// A 2D size object that stores optional width and height values.
-public struct Size {
-    /// The width component of the size.
-    public var width: CGFloat?
-
-    /// The height component of the size.
-    public var height: CGFloat?
-
-    /// Initializes a `Size` with the given width and height.
-    ///
-    /// - Parameters:
-    ///   - width: The width value.
-    ///   - height: The height value.
-    public init(_ width: CGFloat, _ height: CGFloat) {
-        self.width = width
-        self.height = height
-    }
-
-    /// Initializes a `Size` with no values set.
-    public init() {
-        self.width = nil
-        self.height = nil
-    }
-}
-
 /// A singleton class that manages the application window and its Metal rendering layer.
 ///
 /// This class is marked `@MainActor` to ensure all UI operations are performed on the main thread.
@@ -38,6 +13,7 @@ public final class Window: @unchecked Sendable {
 
     /// The logical size of the window.
     public var size: Size
+    public var windowColor: WindowColor
 
     /// The Metal layer used for rendering.
     public var layer: CAMetalLayer
@@ -61,6 +37,7 @@ public final class Window: @unchecked Sendable {
     /// This initializer is private to enforce the singleton pattern.
     private init() {
         size = Size()
+        windowColor = WindowColor()
         layer = CAMetalLayer()
         window = NSWindow()
     }

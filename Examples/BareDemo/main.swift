@@ -9,6 +9,7 @@ struct BareDemo {
     static func main() {
         Logger.info("Bare demo started")
         Window.shared.size = Size(1000, 1000)
+        Window.shared.windowColor = WindowColor(0, 0, 0)
         engine = MetalEngine()
         RunLoop.main.run()
     }

@@ -62,41 +62,36 @@ public class MetalEngine {
     ///
     /// - Important: This method assumes the existence of a valid `Window.shared.drawable` and
     ///   `Device.shared.commandQueue`. It includes better error handling and synchronization.
-    var color: Double = 0
-    var increment: Bool = true
     func draw() {
-        if increment {
-            color += 0.001
-        } else {
-            color -= 0.001
-        }
-
-        if color < 0 {
-            increment = true
-        } else if color > 1 {
-            increment = false
-        }
-
         guard let drawable = Window.shared.layer.nextDrawable() else {
             Logger.warning("No drawable available, skipping frame")
-            return
+            exit(1)
+        }
+
+        let windowColor = Window.shared.windowColor
+        guard let red = windowColor.red,
+              let green = windowColor.green,
+              let blue = windowColor.blue
+        else {
+            Logger.error("Window color must be set")
+            exit(1)
         }
 
         let passDescriptor = MTLRenderPassDescriptor()
         passDescriptor.colorAttachments[0].texture = drawable.texture
         passDescriptor.colorAttachments[0].loadAction = .clear
-        passDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(color, color, color, 1.0)
+        passDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(red, green, blue, 1.0)
         passDescriptor.colorAttachments[0].storeAction = .store
 
         guard let commandBuffer = Device.shared.commandQueue.makeCommandBuffer() else {
             Logger.error("Failed to create command buffer")
-            return
+            exit(1)
         }
 
         guard let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: passDescriptor)
         else {
             Logger.error("Failed to create render encoder")
-            return
+            exit(1)
         }
 
         renderEncoder.endEncoding()
