@@ -26,10 +26,11 @@ public class MetalEngine {
         let screen = NSScreen.main!
         displayLink = screen.displayLink(target: self, selector: #selector(frameTick))
         guard let displayLink = displayLink else {
-            Logger.error("error")
+            Logger.error("Failed to create display link")
             exit(1)
         }
         displayLink.add(to: .main, forMode: .default)
+        Logger.success("MetalEngine initialized successfully")
     }
 
     /// Callback invoked on every vertical sync tick.
@@ -47,10 +48,11 @@ public class MetalEngine {
     /// - Important: If the display link is not set, this function logs an error and exits.
     func stop() {
         guard let displayLink = displayLink else {
-            Logger.error("error")
+            Logger.error("Display link not available for stopping")
             exit(1)
         }
         displayLink.invalidate()
+        Logger.info("MetalEngine stopped")
     }
 
     /// Renders a single frame using Metal.
@@ -59,20 +61,46 @@ public class MetalEngine {
     /// encodes an empty rendering pass, presents the drawable, and commits the command buffer.
     ///
     /// - Important: This method assumes the existence of a valid `Window.shared.drawable` and
-    ///   `Device.shared.commandQueue`. It does not perform error recovery for missing resources.
+    ///   `Device.shared.commandQueue`. It includes better error handling and synchronization.
+    var color: Double = 0
+    var increment: Bool = true
     func draw() {
+        if increment {
+            color += 0.001
+        } else {
+            color -= 0.001
+        }
+
+        if color < 0 {
+            increment = true
+        } else if color > 1 {
+            increment = false
+        }
+
+        guard let drawable = Window.shared.layer.nextDrawable() else {
+            Logger.warning("No drawable available, skipping frame")
+            return
+        }
+
         let passDescriptor = MTLRenderPassDescriptor()
-        passDescriptor.colorAttachments[0].texture = Window.shared.drawable.texture
+        passDescriptor.colorAttachments[0].texture = drawable.texture
         passDescriptor.colorAttachments[0].loadAction = .clear
-        passDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(1.0, 0.75, 0.8, 1.0)
+        passDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(color, color, color, 1.0)
         passDescriptor.colorAttachments[0].storeAction = .store
 
-        guard let commandBuffer = Device.shared.commandQueue.makeCommandBuffer() else { return }
+        guard let commandBuffer = Device.shared.commandQueue.makeCommandBuffer() else {
+            Logger.error("Failed to create command buffer")
+            return
+        }
+
         guard let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: passDescriptor)
-        else { return }
+        else {
+            Logger.error("Failed to create render encoder")
+            return
+        }
 
         renderEncoder.endEncoding()
-        commandBuffer.present(Window.shared.drawable)
+        commandBuffer.present(drawable)
         commandBuffer.commit()
     }
 }
