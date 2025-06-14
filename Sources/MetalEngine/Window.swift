@@ -14,6 +14,7 @@ public final class Window: @unchecked Sendable {
     /// The logical size of the window.
     public var size: Size
     public var windowColor: WindowColor
+    public var title: String?
 
     /// The Metal layer used for rendering.
     public var layer: CAMetalLayer
@@ -38,6 +39,7 @@ public final class Window: @unchecked Sendable {
     private init() {
         size = Size()
         windowColor = WindowColor()
+        title = nil
         layer = CAMetalLayer()
         window = NSWindow()
     }
@@ -53,6 +55,12 @@ public final class Window: @unchecked Sendable {
             exit(1)
         }
         Logger.info("Window width: \(width) height: \(height)")
+
+        guard let title = title else {
+            Logger.error("Window title must be set")
+            exit(1)
+        }
+        Logger.info("Window title: \(title)")
 
         layer.device = Device.shared.device
         layer.pixelFormat = .bgra8Unorm
@@ -72,6 +80,7 @@ public final class Window: @unchecked Sendable {
             window.makeKeyAndOrderFront(nil)
             window.contentView?.wantsLayer = true
             window.contentView?.layer?.addSublayer(layer)
+            window.title = title
             Logger.success("Created NSWindow")
         }
     }

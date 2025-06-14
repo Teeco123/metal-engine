@@ -10,6 +10,7 @@ struct BareDemo {
         Logger.info("Bare demo started")
         Window.shared.size = Size(1000, 1000)
         Window.shared.windowColor = WindowColor(0, 0, 0)
+        Window.shared.title = "Bare demo"
         engine = MetalEngine()
         RunLoop.main.run()
     }
