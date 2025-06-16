@@ -64,18 +64,12 @@ public class MetalEngine {
         passDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(red, green, blue, 1.0)
         passDescriptor.colorAttachments[0].storeAction = .store
 
-        guard let commandBuffer = Device.shared.commandQueue.makeCommandBuffer() else {
-            Logger.error("Failed to create command buffer")
-            exit(1)
-        }
+        let commandBuffer = Device.makeCommandBuffer()
 
-        guard let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: passDescriptor)
-        else {
-            Logger.error("Failed to create render encoder")
-            exit(1)
-        }
+        let renderCommandEncoder = Device.makeRenderCommandEncoder(
+            commandBuffer: commandBuffer, passDescriptor: passDescriptor)
 
-        renderEncoder.endEncoding()
+        renderCommandEncoder.endEncoding()
         commandBuffer.present(drawable)
         commandBuffer.commit()
     }
