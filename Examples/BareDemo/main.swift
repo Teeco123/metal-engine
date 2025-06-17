@@ -9,11 +9,14 @@ struct BareDemo {
     static func main() {
         Logger.info("Bare demo started")
         Window.shared.size = Size(1000, 1000)
-        Window.shared.windowColor = WindowColor(0, 0, 0)
+
+        var color: Double = 0
+        Window.shared.windowColor = WindowColor(color, color, color)
         Window.shared.title = "Bare demo"
 
         engine.update = {
-            Logger.info("dupa")
+            color += 0.001
+            Window.shared.windowColor = WindowColor(color, color, color)
         }
         engine.initialize()
 

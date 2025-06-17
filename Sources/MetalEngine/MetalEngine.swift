@@ -64,10 +64,9 @@ public class MetalEngine {
         passDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(red, green, blue, 1.0)
         passDescriptor.colorAttachments[0].storeAction = .store
 
-        let commandBuffer = Device.makeCommandBuffer()
+        let commandBuffer = Device.shared.commandBuffer
 
-        let renderCommandEncoder = Device.makeRenderCommandEncoder(
-            commandBuffer: commandBuffer, passDescriptor: passDescriptor)
+        let renderCommandEncoder = Device.renderCommandEncoder(commandBuffer, passDescriptor)
 
         renderCommandEncoder.endEncoding()
         commandBuffer.present(drawable)

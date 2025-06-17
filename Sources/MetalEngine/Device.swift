@@ -6,14 +6,25 @@ final class Device: Sendable {
 
     public let device: MTLDevice
     public let commandQueue: MTLCommandQueue
-    public static func makeCommandBuffer() -> MTLCommandBuffer {
-        shared.makeCommandBufferPrivate()
+    public var commandBuffer: MTLCommandBuffer {
+        guard let commandBuffer = commandQueue.makeCommandBuffer() else {
+            Logger.error("Failed to create command buffer")
+            exit(1)
+        }
+        return commandBuffer
     }
-    public static func makeRenderCommandEncoder(
-        commandBuffer: MTLCommandBuffer, passDescriptor: MTLRenderPassDescriptor
+    public static func renderCommandEncoder(
+        _ commandBuffer: MTLCommandBuffer, _ passDescriptor: MTLRenderPassDescriptor
     )
     -> MTLRenderCommandEncoder {
-        shared.makeRenderCommandEncoderPrivate(commandBuffer, passDescriptor)
+        guard
+            let commandEncoder = commandBuffer.makeRenderCommandEncoder(
+                descriptor: passDescriptor)
+        else {
+            Logger.error("Failed to create render command encoder")
+            exit(1)
+        }
+        return commandEncoder
     }
 
     private init() {
@@ -31,27 +42,4 @@ final class Device: Sendable {
         self.commandQueue = commandQueue
         Logger.success("Created command queue for device: \(device.name)")
     }
-
-    private func makeCommandBufferPrivate() -> MTLCommandBuffer {
-        guard let commandBuffer = commandQueue.makeCommandBuffer() else {
-            Logger.error("Failed to create command buffer")
-            exit(1)
-        }
-        return commandBuffer
-    }
-
-    private func makeRenderCommandEncoderPrivate(
-        _ commandBuffer: MTLCommandBuffer, _ passDescriptor: MTLRenderPassDescriptor
-    )
-    -> MTLRenderCommandEncoder {
-        guard
-            let commandEncoder = commandBuffer.makeRenderCommandEncoder(
-                descriptor: passDescriptor)
-        else {
-            Logger.error("Failed to create render command encoder")
-            exit(1)
-        }
-        return commandEncoder
-    }
-
 }
