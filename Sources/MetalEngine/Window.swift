@@ -17,6 +17,13 @@ private final class ViewController: NSViewController {
 private final class WindowDelegate: NSObject, NSWindowDelegate {
     func windowWillClose(_ notification: Notification) {
     }
+
+    func windowWillResize(
+        _ sender: NSWindow,
+        to frameSize: NSSize
+    ) -> NSSize {
+        return sender.frame.size
+    }
 }
 
 public final class Window: @unchecked Sendable {
@@ -67,6 +74,7 @@ public final class Window: @unchecked Sendable {
         }
         viewController.view.wantsLayer = true
         viewController.view.layer?.addSublayer(layer)
+        viewController.view.frame = CGRect(x: 0, y: 0, width: width, height: height)
         Logger.success("Created view controller")
 
         window = NSWindow(contentViewController: viewController)

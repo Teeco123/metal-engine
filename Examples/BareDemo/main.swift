@@ -9,7 +9,7 @@ struct BareDemo {
 
     static func main() {
         Logger.info("Bare demo started")
-        window.size = Size(1000, 1000)
+        window.size = Size(1800, 1169 - 74)
 
         var color: Double = 0
         window.windowColor = WindowColor(color, color, color)
