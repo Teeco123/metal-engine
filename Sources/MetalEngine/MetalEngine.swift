@@ -3,35 +3,58 @@ import Foundation
 import Metal
 import QuartzCore
 
-@MainActor
-public class MetalEngine {
-    var displayLink: CADisplayLink?
+class DisplayLinkDelegate: CAMetalDisplayLinkDelegate {
+    func metalDisplayLink(_ link: CAMetalDisplayLink, needsUpdate update: CAMetalDisplayLink.Update) {
+        MetalEngine.shared.update?()
+        MetalEngine.shared.draw(drawable: update.drawable)
+    }
+
+}
+
+class AppDelegate: NSObject, NSApplicationDelegate {
+
+    func applicationDidFinishLaunching(_ aNotification: Notification) {
+        Window.shared.initialize()
+        Logger.info("applicationDidFinishLaunching finished")
+    }
+
+    func applicationWillTerminate(_ aNotification: Notification) {
+        MetalEngine.shared.stop()
+
+    }
+
+    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
+        return true
+    }
+
+}
+
+public class MetalEngine: @unchecked Sendable {
+    public static let shared = MetalEngine()
     public var update: (() -> Void)?
+    var app: NSApplication?
+    var appDelegate: AppDelegate?
+
+    var displayLink: CAMetalDisplayLink?
+    var displayLinkDelegate: CAMetalDisplayLinkDelegate?
 
     public init() {}
 
+    @MainActor
     public func initialize() {
         Logger.info("MetalEngine starting up...")
-        Window.shared.initialize()
-        let screen = NSScreen.main!
-        let app = NSApplication.shared
-        displayLink = screen.displayLink(target: self, selector: #selector(frameTick))
-        guard let displayLink = displayLink else {
-            Logger.error("Failed to create display link")
+
+        appDelegate = AppDelegate()
+        app = NSApplication.shared
+        guard let app = app else {
+            Logger.error("NSApplication not initialized")
             exit(1)
         }
-        displayLink.add(to: .main, forMode: .default)
 
+        app.delegate = appDelegate
         app.setActivationPolicy(.regular)
         app.activate(ignoringOtherApps: true)
         app.run()
-
-        Logger.success("MetalEngine initialized successfully")
-    }
-
-    @objc func frameTick() {
-        update?()
-        draw()
     }
 
     func stop() {
@@ -40,15 +63,11 @@ public class MetalEngine {
             exit(1)
         }
         displayLink.invalidate()
+        displayLink.remove(from: .main, forMode: .default)
         Logger.info("MetalEngine stopped")
     }
 
-    func draw() {
-        guard let drawable = Window.shared.layer.nextDrawable() else {
-            Logger.warning("No drawable available, skipping frame")
-            exit(1)
-        }
-
+    func draw(drawable: CAMetalDrawable) {
         let windowColor = Window.shared.windowColor
         guard let red = windowColor.red,
               let green = windowColor.green,
@@ -65,7 +84,6 @@ public class MetalEngine {
         passDescriptor.colorAttachments[0].storeAction = .store
 
         let commandBuffer = Device.shared.commandBuffer
-
         let renderCommandEncoder = Device.renderCommandEncoder(commandBuffer, passDescriptor)
 
         renderCommandEncoder.endEncoding()
